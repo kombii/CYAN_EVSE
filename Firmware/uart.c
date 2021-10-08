@@ -378,7 +378,7 @@ void UART_config(void)
 	COMx_InitStructure.BaudRateDouble = DISABLE;
 	COMx_InitStructure.UART_Interrupt = ENABLE;
 	COMx_InitStructure.UART_Priority    = Priority_0;	
-	COMx_InitStructure.UART_P_SW      = UART1_SW_P30_P31;	
+	COMx_InitStructure.UART_P_SW      = UART1_SW_P16_P17;	
 	UART_Configuration(UART1, &COMx_InitStructure);	
 }
 
