@@ -1,6 +1,6 @@
 #ifndef	__STATE_MECH_H
 #define	__STATE_MECH_H
-
+#include "TYPESS.H"
 //状态机们-----------------------------------------
 
 static bit emgstate;//紧急状态输入 1紧急 0正常
