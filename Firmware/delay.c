@@ -3,7 +3,7 @@ void delay_ms(unsigned char ms)
 {
 	unsigned int i;
 	do{
-		i = MAIN_Fosc / 10000;
+		i = MAIN_Fosc / 1000;
 		while(--i);
 	}while(--ms);
 }
