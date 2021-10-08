@@ -127,6 +127,8 @@ extern PWMx_Duty PWMA_Duty;
 void PWM_config(void);
 u8	PWM_Configuration(u8 PWM, PWMx_InitDefine *PWMx);
 void UpdatePwm(u8 PWM, PWMx_Duty *PWMx);
+void PWMA_ENO3P_DISABLE(void);
+void PWMA_ENO3P_ENABLE(void);
 
 #endif
 

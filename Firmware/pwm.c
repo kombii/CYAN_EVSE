@@ -2,9 +2,12 @@
 
 PWMx_Duty PWMA_Duty;
 
+
 void PWM_config(void)
 {
 	PWMx_InitDefine		PWMx_InitStructure;
+	
+	PWMA_Duty.PWM3_Duty = MAIN_Fosc/1000/2;
 	
 	PWMx_InitStructure.PWM3_Mode    =	CCMRn_PWM_MODE1;	//模式,		CCMRn_FREEZE,CCMRn_MATCH_VALID,CCMRn_MATCH_INVALID,CCMRn_ROLLOVER,CCMRn_FORCE_INVALID,CCMRn_FORCE_VALID,CCMRn_PWM_MODE1,CCMRn_PWM_MODE2
 	PWMx_InitStructure.PWM3_SetPriority  = Priority_0;			//指定中断优先级(低到高) Priority_0,Priority_1,Priority_2,Priority_3
@@ -13,14 +16,31 @@ void PWM_config(void)
 	PWMx_InitStructure.PWM3_Duty    = PWMA_Duty.PWM3_Duty;	//PWM3占空比时间, 0~Period
 	PWMx_InitStructure.PWM_DeadTime = 0;								//死区发生器设置, 0~255
 	
-	PWMx_InitStructure.PWM_EnoSelect   = ENO3P;	//输出通道选择,	ENO1P,ENO1N,ENO2P,ENO2N,ENO3P,ENO3N,ENO4P,ENO4N / ENO5P,ENO6P,ENO7P,ENO8P
+	PWMx_InitStructure.PWM_EnoSelect   = 0;	//输出通道选择,	ENO1P,ENO1N,ENO2P,ENO2N,ENO3P,ENO3N,ENO4P,ENO4N / ENO5P,ENO6P,ENO7P,ENO8P
 	PWMx_InitStructure.PWM_PS_SW       = PWM3_SW_P14_P15;	//切换端口,		PWM1_SW_P10_P11,PWM1_SW_P20_P21,PWM1_SW_P60_P61
 
 	PWMx_InitStructure.PWM_CC3Enable   = ENABLE;				//开启PWM3P输入捕获/比较输出,  ENABLE,DISABLE
 	
 	PWMx_InitStructure.PWM_MainOutEnable= ENABLE;				//主输出使能, ENABLE,DISABLE
-	PWMx_InitStructure.PWM_CEN_Enable   = ENABLE;				//使能计数器, ENABLE,DISABLE
+	PWMx_InitStructure.PWM_CEN_Enable   = DISABLE;				//使能计数器, ENABLE,DISABLE
 	PWM_Configuration(PWMA, &PWMx_InitStructure);				//初始化PWM,  PWMA,PWMB
+}
+
+void PWMA_ENO3P_DISABLE(void)
+{
+		EAXSFR();		/* MOVX A,@DPTR/MOVX @DPTR,A指令的操作对象为扩展SFR(XSFR) */
+		PWMA_ENO = 0x00;	//关闭输出通道，释放GPIO
+		PWMA_CEN_Disable(); //关闭计数器，反正也没用
+		EAXRAM();		/* MOVX A,@DPTR/MOVX @DPTR,A指令的操作对象为扩展RAM(XRAM) */
+}
+
+void PWMA_ENO3P_ENABLE(void)
+{
+		EAXSFR();		/* MOVX A,@DPTR/MOVX @DPTR,A指令的操作对象为扩展SFR(XSFR) */
+		PWMA_ENO = ENO3P;	//启用输出通道
+		PWMA_Counter(0);	//计数器清零
+		PWMA_CEN_Enable();	//启动计数
+		EAXRAM();		/* MOVX A,@DPTR/MOVX @DPTR,A指令的操作对象为扩展RAM(XRAM) */
 }
 
 u8 PWM_Configuration(u8 PWM, PWMx_InitDefine *PWMx)
