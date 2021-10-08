@@ -12,7 +12,6 @@ uint8_t queue_init(uint16_t *Front, uint16_t *Rear, uint8_t *PBase, uint16_t Len
 }
 uint8_t queue_full(uint16_t *Front, uint16_t *Rear, uint8_t *PBase, uint16_t Len)
 {
-	(void *)PBase;
     if((((*Rear) + 1) % Len) == *Front) {
         return 1;
     } else {
