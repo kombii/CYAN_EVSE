@@ -153,7 +153,7 @@ uint32_t handle_485_rx(RX_BUFF_TYPE *rx_buff)
 }
 
 //DLT645-2007 数据读取
-int dlt645_2007_read_data(uint32_t cmdcode)
+int Dlt645_Read_Data(uint32_t cmdcode)
 {
 	uint8_t i;
     uint8_t send_buf[DL645_2007_RD_CMD_LEN];
@@ -192,8 +192,9 @@ int dlt645_2007_read_data(uint32_t cmdcode)
 	return -1;
 }
 //终端初始化实现
-void cli_init(void)
+void Cli_Init(void)
 {
+	UART_config();
 	QUEUE_INIT(cli_rx_buff);
     memset((uint8_t *)&cli_rx_buff, 0, sizeof(RX_BUFF_TYPE));
 }

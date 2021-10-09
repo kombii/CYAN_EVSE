@@ -17,6 +17,6 @@ typedef struct {
 } ELEC_TYPE_S;
 
 extern ELEC_TYPE_S elec_condition;
-extern void cli_init(void);
-int dlt645_2007_read_data(uint32_t cmdcode);
+extern void Cli_Init(void);
+int Dlt645_Read_Data(uint32_t cmdcode);
 #endif /* __DLT645_2007_H */
