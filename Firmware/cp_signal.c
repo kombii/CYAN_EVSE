@@ -1,6 +1,10 @@
 #include "cp_signal.h"
 #include "adc.h"
 
+void CP_Init(void){
+	ADC_config();
+}
+
 //获取充电系的CP线路工作状态
 void Conclude_CP_State(void){
 #define v_0v 4500
@@ -16,7 +20,7 @@ else												cp_state = 255;//电压255v(超高)档
 
 }
 //从adc获取cp信号的电压
-void get_cp_vol_task(void)
+void Get_CP_Vol_Task(void)
 {
 	uint32_t adcval = 0;
 	uint32_t intnalref1v9=0;
