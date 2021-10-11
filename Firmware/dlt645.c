@@ -3,6 +3,7 @@
 #include "uart.h"
 #include "BspTime.h"
 #include <string.h>
+#include <stdio.h>
 
 typedef struct {
 #define HANDLE_LEN 30
@@ -39,7 +40,7 @@ uint32_t dlt645_2007_parsing_data(uint8_t *read_data)
 			  ((uint32_t)code_buf[1] << 8)  | 
 			  ((uint32_t)code_buf[2] << 16) | 
 			  ((uint32_t)code_buf[3] << 24);
-	//printf("cmd:%lu\r\n",cmdcode);
+	//printf("cmd:%l06x\r\n",cmdcode);
     switch (cmdcode)
     {
     case DIC_0:
@@ -89,8 +90,7 @@ uint32_t handle_485_rx(RX_BUFF_TYPE *rx_buff)
 {
     static HANDLE_TYPE_S Handle = {{0},0};
 	static autotimer* handlefree = NULL;
-	
-	uint32_t thistimecmd = 0;
+	uint32_t thistimecmd  = 0xFFFFFFFF;
 	if(handlefree == NULL){
 		handlefree = obtainTimer(0);
 	}
@@ -135,11 +135,11 @@ uint32_t handle_485_rx(RX_BUFF_TYPE *rx_buff)
 			if (dlt645_common_check(Handle.buff,Handle.len,meter_addr) >= 0)
 			{
 				thistimecmd = dlt645_2007_parsing_data(Handle.buff);
-				PrintString1("645 PROTROL OK\r\n");
+				//printf("645 PROTROL OK\r\n");
 			}
 			else
 			{
-				PrintString1("645 PROTROL ERROR\r\n");
+				//printf("645 PROTROL ERROR\r\n");
 			}				
 			setTimer(handlefree,0);
 		    Handle.len = 0;
@@ -160,8 +160,7 @@ int Dlt645_Read_Data(uint32_t cmdcode)
 	uint8_t send_code[4] = {0};
 	autotimer* timeout = obtainTimer(0);
 	
-	
-    memset(send_buf, 0, sizeof(send_buf));
+    memset(send_buf, 0, DL645_2007_RD_CMD_LEN);
 
     memcpy(send_buf + 1, meter_addr, DL645_ADDR_LEN);
 
@@ -177,6 +176,11 @@ int Dlt645_Read_Data(uint32_t cmdcode)
 	for(i=0;i<3;i++)
 	{
 		dlt645_send_msg(send_buf, DL645_2007_RD_CMD_LEN);
+//		printf("send data:");
+//		for(datachunt=0;datachunt<DL645_2007_RD_CMD_LEN;datachunt++){
+//		printf("0x%02bx,",send_buf[datachunt]);
+//		}
+//		printf("\r\n");
 		while(COM2.B_TX_busy);//等待发送完成
 		setTimer(timeout,0);
 		while(IS_TIMEOUT_1MS(timeout, 500)){
@@ -185,8 +189,8 @@ int Dlt645_Read_Data(uint32_t cmdcode)
 				returnTimer(timeout);
 				return 0;
 			}
-
 		}
+		//printf("retry:%06lx\r\n",cmdcode);
 	}
 	returnTimer(timeout);
 	return -1;
@@ -199,4 +203,56 @@ void Cli_Init(void)
     memset((uint8_t *)&cli_rx_buff, 0, sizeof(RX_BUFF_TYPE));
 }
 
+//dlt645信息更新任务，返回0数据有效
+int Dlt645_update_task(void)
+{
+	static uint8_t step = 0;
+	switch (step){
+		case 0:
+			if(Dlt645_Read_Data(0x2010100) == 0)				
+			{
+				//printf("vol:%f\r\n",*(float *)elec_condition.Voltage);
+				step++;
+			}
+			else
+			{
+				//printf("volerr\r\n");
+			}
+			break;
+		case 1:
+			if(Dlt645_Read_Data(0x2020100) == 0)
+			{
+				//printf("Cur:%f\r\n",*(float *)elec_condition.Current);
+				step++;
+			}
+			else
+			{
+				//printf("Curerr\r\n");
+			}
+			break;
+		case 2:
+			if(Dlt645_Read_Data(0x2030100) == 0)
+			{
+				//printf("AP:%f\r\n",*(float *)elec_condition.ActivePower);
+				step++;
+			}
+			else
+			{
+				//printf("APerr\r\n");
+			}
+			break;
+		case 3:
+			if(Dlt645_Read_Data(0x0) == 0)			
+			{
+				//printf("eng:%f\r\n",*(float *)elec_condition.Energy);
+				step = 0;
+			}
+			else
+			{
+				//printf("engerr\r\n");
+			}
+			break;
+		}
+		return step;
+}
 
