@@ -2,6 +2,7 @@
 #include "TYPESS.H"
 #include "sys_queue.h"
 #include "dlt645.h"
+#include "gpio.h"
 
 extern RX_BUFF_TYPE         cli_rx_buff;
 
@@ -362,7 +363,22 @@ void PrintString(COMx_Define *COMx, u8 *puts)
 
 void UART_config(void)
 {
+	GPIO_InitTypeDef	GPIO_InitStructure;
 	COMx_InitDefine		COMx_InitStructure;
+	
+	GPIO_InitStructure.Pin  = GPIO_Pin_6 | GPIO_Pin_7;
+	GPIO_InitStructure.Mode = GPIO_PullUp;
+	GPIO_Inilize(GPIO_P1,&GPIO_InitStructure); //16 17 ´®¿Ú
+	
+	GPIO_InitStructure.Pin  = GPIO_Pin_0 | GPIO_Pin_1;
+	GPIO_InitStructure.Mode = GPIO_PullUp;
+	GPIO_Inilize(GPIO_P1,&GPIO_InitStructure); //10 11 ´®¿Ú
+	
+	GPIO_InitStructure.Pin  = GPIO_Pin_2;
+	GPIO_InitStructure.Mode = GPIO_PullUp;
+	GPIO_Inilize(GPIO_P1,&GPIO_InitStructure); //12 485¿ØÖÆ½Å
+	P12 = 0;
+	
 	COMx_InitStructure.UART_Mode      = UART_8bit_BRTx;
 	COMx_InitStructure.UART_BaudRate  = 19200ul;
 	COMx_InitStructure.UART_RxEnable  = ENABLE;
