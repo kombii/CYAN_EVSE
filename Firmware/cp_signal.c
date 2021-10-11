@@ -1,7 +1,13 @@
 #include "cp_signal.h"
 #include "adc.h"
-
+#include "gpio.h"
 void CP_Init(void){
+	GPIO_InitTypeDef	GPIO_InitStructure;
+	
+	GPIO_InitStructure.Pin  = GPIO_Pin_2 | GPIO_Pin_3;
+	GPIO_InitStructure.Mode = GPIO_HighZ;
+	GPIO_Inilize(GPIO_P0,&GPIO_InitStructure);	//02 03 adc ‰»Î∏ﬂ◊Ë
+	
 	ADC_config();
 }
 
