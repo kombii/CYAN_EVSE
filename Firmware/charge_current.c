@@ -7,8 +7,9 @@
 //大多数车根本不认超过32a的电流
 //常用值为32a(7KW) 16a(3.5KW) 8a(1.75KW),最低为6a(1.32KW)
 void Set_Charge_Current(uint16_t current){
-	if(current>500)current = 500;
-	if(current<60)current = 60;
+	if(current>500L)current = 500L;
+	if(current<60L)current = 60L;
+	avaliable_current = current;
 	PWMA_Duty.PWM3_Duty = (MAIN_Fosc/1000L)*(current/6L)/100L;
 	UpdatePwm(PWMA,&PWMA_Duty);
 }	
