@@ -1,6 +1,6 @@
 #include	"timer.h"
 #include    "BspTime.h"
-
+#include     "gpio.h"
 void timer0_int (void) interrupt TIMER0_VECTOR
 {
 	tickingTimer();
@@ -131,7 +131,13 @@ u8	Timer_Inilize(u8 TIM, TIM_InitTypeDef *TIMx)
 
 void Timer_config(void)
 {
-	TIM_InitTypeDef		TIM_InitStructure;						//结构定义
+	GPIO_InitTypeDef	GPIO_InitStructure;
+	TIM_InitTypeDef		TIM_InitStructure;	
+	
+	GPIO_InitStructure.Pin  = GPIO_Pin_4;
+	GPIO_InitStructure.Mode = GPIO_OUT_PP;
+	GPIO_Inilize(GPIO_P1,&GPIO_InitStructure);	//14 cp输出 
+	
 	TIM_InitStructure.TIM_Mode      = TIM_16BitAutoReload;	//指定工作模式,   TIM_16BitAutoReload,TIM_16Bit,TIM_8BitAutoReload,TIM_16BitAutoReloadNoMask
 	TIM_InitStructure.TIM_Priority    = Priority_0;			//指定中断优先级(低到高) Priority_0,Priority_1,Priority_2,Priority_3
 	TIM_InitStructure.TIM_Interrupt = ENABLE;					//中断是否允许,   ENABLE或DISABLE
