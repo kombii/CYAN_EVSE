@@ -1,0 +1,6 @@
+..\HARDWARE\TIMER\timer.c -E --c99 --execute_only -c --cpu Cortex-M3 -g -O2 --apcs=interwork --split_sections -I ..\HARDWARE\LED -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\USER -I ..\STM32F10x_FWLib\inc -I ..\CORE -I ..\HARDWARE\KEY -I ..\HARDWARE\TIMER -I ..\SYSTEM\bsptime -I ..\SYSTEM\IM1281B
+-I.\RTE\_PWM
+-IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.0\Device\Include
+-IC:\Keil_v5\ARM\CMSIS\Include
+-D__UVISION_VERSION="527" -DSTM32F10X_MD -DSTM32F10X_MD -DUSE_STDPERIPH_DRIVER
+-o .\timer.i --list_dir ".\\" --list
